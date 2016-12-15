@@ -1,0 +1,29 @@
+From: Jason Abele <jason@nextthing.co>
+Date: Mon, 19 Dec 2016 12:55:21 -0800
+Subject: Add modules_install target and use depmod selected by kbuild
+
+---
+ Makefile | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/Makefile b/Makefile
+index be22b69..ced6164 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1849,12 +1849,15 @@ all: modules
+ modules:
+ 	$(MAKE) ARCH=$(ARCH) CROSS_COMPILE=$(CROSS_COMPILE) -C $(KSRC) M=$(shell pwd)  modules
+ 
++modules_install:
++	$(MAKE) ARCH=$(ARCH) CROSS_COMPILE=$(CROSS_COMPILE) -C $(KSRC) M=$(shell pwd)  INSTALL_MOD_PATH=$(PREFIX) modules_install
++
+ strip:
+ 	$(CROSS_COMPILE)strip $(MODULE_NAME).ko --strip-unneeded
+ 
+ install:
+ 	install -p -m 644 $(MODULE_NAME).ko  $(MODDESTDIR)
+-	/sbin/depmod -a ${KVER}
++	$(DEPMOD) -a ${KVER}
+ 
+ uninstall:
+ 	rm -f $(MODDESTDIR)/$(MODULE_NAME).ko
